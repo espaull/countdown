@@ -6,17 +6,33 @@ function Countdown() {
   const [time, setTime] = useState('');
   const [timer, setTimer] = useState(null);
 
-  const endDate = dayjs().add(1, 'hour');
-
-  let timeLeft;
+  let endDate = dayjs().add(1, 'day');
+  endDate = endDate.add(8, 'hour');
+  endDate = endDate.add(10, 'second');
 
   const calculateTimeLeft = () => {
     const now = dayjs();
+    const daysLeft = endDate.diff(now, 'day');
 
-    timeLeft = dayjs(endDate.valueOf() - now.valueOf());
-    timeLeft = timeLeft.subtract(dayjs().utcOffset(), 'minute');
+    if (daysLeft > 7) {
+      setTime('Ongoing');
+    } else if (daysLeft > 1 && daysLeft < 7) {
+      setTime(`${daysLeft} days left`);
+    } else if (daysLeft === 1) {
+      const hoursLeft = endDate.diff(now, 'hour') - 24;
 
-    setTime(timeLeft.format('H[h] mm[m] ss[s]'));
+      if (hoursLeft > 0) {
+        setTime(`${daysLeft} day ${hoursLeft} hours left`);
+      } else {
+        setTime(`${daysLeft} day left`);
+      }
+    } else {
+      let timeLeft = dayjs(endDate.valueOf() - now.valueOf());
+
+      timeLeft = timeLeft.subtract(dayjs().utcOffset(), 'minute');
+
+      setTime(timeLeft.format('H[h] mm[m] ss[s]'));
+    }
   };
 
   const startTimer = () => {
